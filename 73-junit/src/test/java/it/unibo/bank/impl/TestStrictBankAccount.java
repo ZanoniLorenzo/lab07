@@ -5,7 +5,9 @@ import it.unibo.bank.api.BankAccount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Test class for the {@link StrictBankAccount} class.
@@ -21,7 +23,8 @@ class TestStrictBankAccount {
      */
     @BeforeEach
     public void setUp() {
-        fail("To be implemented");
+        this.mRossi = new AccountHolder("Mario", "Rossi", 1);
+        this.bankAccount = new StrictBankAccount(mRossi, 0.0);
     }
 
     /**
@@ -29,7 +32,9 @@ class TestStrictBankAccount {
      */
     @Test
     public void testInitialization() {
-        fail("To be implemented");
+        assertEquals(0.0, bankAccount.getBalance());
+        assertEquals(0, bankAccount.getTransactionsCount());
+        assertEquals(mRossi, bankAccount.getAccountHolder());
     }
 
     /**
@@ -37,7 +42,13 @@ class TestStrictBankAccount {
      */
     @Test
     public void testManagementFees() {
-        fail("To be implemented");
+        try {
+            this.bankAccount.deposit(this.mRossi.getUserID(), 100);
+            this.bankAccount.chargeManagementFees(this.mRossi.getUserID());
+            assertEquals(100.0 - (5.0 + 1 * 0.1), bankAccount.getBalance());
+        } catch (Exception e) {
+            System.out.println("testManagementFees failed: " + e.getMessage());
+        }
     }
 
     /**
@@ -45,7 +56,12 @@ class TestStrictBankAccount {
      */
     @Test
     public void testNegativeWithdraw() {
-        fail("To be implemented");
+        try {
+            bankAccount.withdraw(mRossi.getUserID(), -50.0);
+            Assertions.fail("withdrawing negative value was possible");
+        } catch (Exception e) {
+            System.out.println("cannot withdraw negative amount: test passed");
+        }
     }
 
     /**
@@ -53,6 +69,11 @@ class TestStrictBankAccount {
      */
     @Test
     public void testWithdrawingTooMuch() {
-        fail("To be implemented");
+        try {
+            bankAccount.withdraw(mRossi.getUserID(), 100.0);
+            Assertions.fail("withdrawing too much was possible");
+        } catch (Exception e) {
+            System.out.println("cannot withdraw too much: test passed");
+        }
     }
 }
